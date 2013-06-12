@@ -1,11 +1,17 @@
 #include <iostream>
 #include <stdio.h>
 
-#define MAXN 500
+#define MAXN 520
 
 using namespace std;
 
-int a[MAXN][MAXN], b[MAXN][MAXN], c[MAXN][MAXN], d[MAXN][MAXN][MAXN], n, m;
+struct mass {
+	int val, prev;
+};
+
+mass d[MAXN][MAXN];
+
+int a[MAXN][MAXN], b[MAXN][MAXN], c[MAXN][MAXN], n, m;
 
 int main() {
 	scanf("%d%d", &n, &m);
@@ -31,27 +37,33 @@ int main() {
 			c[i][j] = cur;
 		}
    	}
-
-   	for ( int i = 1; i <= n; i++ )
-   		for ( int j = i+1; j <= n; j++ )
-   			cout << i << " -> " << j << ": " << c[i][j] << endl;
-
-
 				
 	for ( int i = 2; i <= n; i++ )
 		for ( int j = 1; j <= i; j++ )
-			for ( int k = 1; k <= i; k++ ) {
-				d[i][j][k] = d[i-1][j][k];
-				for ( int q = 1; q <= i-1; q++ ) {
-					int x = d[i-1][j-1][q] + c[q][i];
-					if ( x > d[i][j][k] )
-						d[i][j][k] = q;
-				}
-					
-			}
+			for ( int k = 1; k <= i-1; k++ )
+				if ( d[k][j-1].val + c[k][i] >= d[i][j].val ) {
+					d[i][j].val = d[k][j-1].val + c[k][i];
+					d[i][j].prev = k;
+				}			
 
+	int ans = 0, p = 0;
 	for ( int i = 2; i <= n; i++ )
-		cout << d[n][m][i] << ' ';
+		if ( d[i][m].val >= ans ) {
+			ans = d[i][m].val;
+			p = i;
+		}
+
+	int path[MAXN], np = m;
+	while ( np > 0 ) {
+		path[np] = p-1;
+		p = d[p][np].prev;
+		np--;	
+	}
+
+
+	printf("%d\n", ans);
+	for ( int i = 1; i <= m; i++ )
+		printf("%d ", path[i]);
 
 	return 0;
 }
