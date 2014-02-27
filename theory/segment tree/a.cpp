@@ -19,6 +19,21 @@ void build (int a[], int v, int tl, int tr) {
 }
 
 
+void updateSegment(int v, int tl, int tr, int l, int r) {
+	if ( l > r )
+		return 0;
+	if ( l == tl && r == tr ) {
+		t[v]++;
+		return 0;
+	}
+
+	int tm = (tl + tr) / 2;
+
+	updateSegment(v*2, tl, tm, l, min(r, tm));
+	updateSegment(v*2+1, tm+1, tr, max(l, tm+1), r);
+}
+
+
 int sum (int v, int tl, int tr, int l, int r) {
 	if (l > r)
 		return 0;
